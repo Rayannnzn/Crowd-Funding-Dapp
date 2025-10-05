@@ -42,13 +42,15 @@ export function CrowdFundingInterface() {
   const { 
     writeContract: fund, 
     data: fundData,
-    isPending: isFundPending 
+    isPending: isFundPending,
+    error: fundError
   } = useWriteContract();
 
   const { 
     writeContract: withdraw, 
     data: withdrawData,
-    isPending: isWithdrawPending 
+    isPending: isWithdrawPending,
+    error: withdrawError
   } = useWriteContract();
 
   const { isLoading: isFunding, isSuccess: isFundSuccess } = useWaitForTransactionReceipt({
@@ -82,6 +84,21 @@ export function CrowdFundingInterface() {
       setTimeout(() => setShowSuccess(null), 5000);
     }
   }, [isWithdrawSuccess]);
+
+  // Handle errors (user rejection or transaction failure)
+  useEffect(() => {
+    if (fundError) {
+      console.error('Fund error:', fundError);
+      setIsLoading(null);
+    }
+  }, [fundError]);
+
+  useEffect(() => {
+    if (withdrawError) {
+      console.error('Withdraw error:', withdrawError);
+      setIsLoading(null);
+    }
+  }, [withdrawError]);
 
   const handleFund = async () => {
     if (!amount || !isConnected || !currentContractAddress) return;
@@ -412,8 +429,8 @@ export function ContactForm() {
           access_key: 'be4a91be-0865-4c95-b888-555e4f5a111a', // Get free key from web3forms.com
           name: name,
           message: message,
-          subject: 'New Contact from Crowd Funding DApp',
-          from_name: 'Crowd Funding Platform',
+          subject: 'New Contact from CrowdFunding DApp',
+          from_name: 'CrowdFunding Platform',
         }),
       });
 
